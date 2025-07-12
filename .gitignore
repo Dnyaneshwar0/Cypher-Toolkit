@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 backend/keys/
 *.pem
+*.crt
+*.enc
+*.dec
+*.zip
+.env
+env/
