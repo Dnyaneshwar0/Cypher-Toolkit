@@ -1,15 +1,4 @@
-import sys
-import os
-
-# Debug: show your current working directory
-print("Current working directory:", os.getcwd())
-
-# Add your project root to sys.path so Python can find `backend`
-sys.path.append(
-    os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..', '..', '..')
-    )
-)
+# backend/tests/crypto_utils/test_encoder_cli.py
 
 from backend.app.services.crypto_utils import encoder
 
