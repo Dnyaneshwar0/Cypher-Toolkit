@@ -1,7 +1,6 @@
 venv
 __pycache__/
 frontend/node_modules
-frontend/package-lock.json
 *.pyc
 backend/keys/
 *.pem
