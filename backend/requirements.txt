@@ -1,1 +1,4 @@
-Pillow
+
+fastapi
+uvicorn
+pillow
