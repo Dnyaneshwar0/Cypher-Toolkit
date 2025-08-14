@@ -23,7 +23,7 @@ export default function Home() {
 
         <a
             href="#features"
-            className="absolute bottom-12 left-1/2 transform -translate-x-1/2 px-6 py-3 text-lg bg-gray-900 border-2 border-blue-500 text-gray-300 rounded-full font-semibold shadow-sm hover:shadow-blue-500 hover:bg-gray-800 transition z-10"
+            className="absolute bottom-12 left-1/2 transform -translate-x-1/2 px-6 py-3 text-lg bg-gray-900 border-2 border-blue-500 text-gray-300 rounded-full font-semibold hover:shadow-blue-500 hover:bg-gray-800 transition z-10"
         >
             Explore Features
         </a>
@@ -42,7 +42,7 @@ export default function Home() {
                 gif={backgroundImage}
               />
             </Link>
-            <Link to="/dummy" className='block'>
+            <Link to="/steg#" className='block'>
               <FeatureCard
                 title="Steganography"
                 description="Hide and reveal messages in images. A fun and secretive way to communicate!"
