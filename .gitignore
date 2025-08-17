@@ -1,6 +1,7 @@
 venv
 __pycache__/
 frontend/node_modules
+frontend/build
 *.pyc
 backend/keys/
 *.pem

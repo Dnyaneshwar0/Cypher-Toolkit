@@ -1,102 +1,143 @@
-import React, { useState } from 'react';
+// steg.js
+import React, { useEffect, useMemo, useState } from 'react';
 
 export default function Steg() {
   const [file1, setFile1] = useState(null);
   const [file2, setFile2] = useState(null);
-  const [output, setOutput] = useState(null);
+  const [output, setOutput] = useState(null); // { url, filename, kind: 'image'|'text' }
   const [selectedOption, setSelectedOption] = useState('encode');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
 
-  // Create preview URLs for files
-  const preview1 = file1 ? URL.createObjectURL(file1) : null;
-  const preview2 = file2 ? URL.createObjectURL(file2) : null;
+  const preview1 = useMemo(() => (file1 ? URL.createObjectURL(file1) : null), [file1]);
+  const preview2 = useMemo(() => (file2 ? URL.createObjectURL(file2) : null), [file2]);
 
-  // Example options - you can customize
+  useEffect(() => () => {
+    if (preview1) URL.revokeObjectURL(preview1);
+    if (preview2) URL.revokeObjectURL(preview2);
+  }, [preview1, preview2]);
+
   const options = [
-    // { value: '', label: 'Select option' },
     { value: 'encode', label: 'Encode' },
     { value: 'decode', label: 'Decode' },
+    { value: 'diffmap', label: 'Generate Diff Map' },
   ];
 
-  // Fake backend conversion simulation
-  const handleConvert = () => {
-    if (!selectedOption) {
-      alert('Please select an option.');
+  const handleConvert = async () => {
+    setError('');
+    setOutput(null);
+
+    if ((selectedOption === 'encode' || selectedOption === 'diffmap') && (!file1 || !file2)) {
+      setError('Please upload two files.');
+      return;
+    }
+    if (selectedOption === 'decode' && !file1) {
+      setError('Please upload a file.');
       return;
     }
 
-    if (selectedOption === 'encode' && !file1 && !file2) {
-      alert('Please upload at least one file.');
-      return;
-    } else if (selectedOption === 'decode' && !file1) {
-      alert('Please upload a file.');
-      return;
+    const form = new FormData();
+    let url = '';
+    let expectedFilename = '';
+
+    if (selectedOption === 'encode') {
+      form.append('carrier', file1);
+      form.append('secret', file2);
+      url = '/steg/encode';   // 🔹 updated
+      expectedFilename = 'encoded_output.png';
+    } else if (selectedOption === 'decode') {
+      form.append('encoded', file1);
+      url = '/steg/decode';   // 🔹 updated
+      expectedFilename = 'decoded_output.png';
+    } else {
+      form.append('original', file1);
+      form.append('encoded', file2);
+      url = '/steg/diff';     // 🔹 updated
+      expectedFilename = 'diff_map.png';
     }
 
-    // For demo, just show a text output with selected option + filenames
-    setOutput(`Processed ${file1?.name || ''} and ${selectedOption === 'encode' ? (file2?.name || '') : ''} with ${selectedOption}`);
+
+    try {
+      setBusy(true);
+      const res = await fetch(url, {
+        method: 'POST',
+        body: form,
+      });
+
+      if (!res.ok) {
+        const maybeJson = await res.json().catch(() => null);
+        throw new Error(maybeJson?.error || `Request failed with ${res.status}`);
+      }
+
+      // The backend returns PNG images for all three routes.
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+
+      setOutput({ url: objectUrl, filename: expectedFilename, kind: 'image', blob });
+    } catch (err) {
+      setError(err.message || 'Something went wrong');
+    } finally {
+      setBusy(false);
+    }
   };
 
-  // Download handler for output
   const handleDownload = () => {
     if (!output) return;
-    const blob = new Blob([output], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'output.txt';
+    a.href = output.url;
+    a.download = output.filename || 'output.bin';
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    a.remove();
+    // Do NOT revoke here immediately; user agent may still read. Revoke on next change/unmount:
+    // URL.revokeObjectURL(output.url);
   };
+
+  // Revoke previous output URL when output changes/unmount
+  useEffect(() => {
+    return () => {
+      if (output?.url) URL.revokeObjectURL(output.url);
+    };
+  }, [output?.url]);
 
   return (
     <div className="min-h-screen bg-black text-gray-300 px-6 py-12 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 font-orbitron">
-
-      {/* Left: file inputs + previews */}
+      {/* File inputs */}
       <div className="space-y-10">
-        {/* File input 1 */}
         <div>
           <label className="block mb-2 font-semibold text-neon">Upload File 1</label>
           <input
             type="file"
-            accept="image/*,video/*,text/*"
-            onChange={e => setFile1(e.target.files[0])}
+            accept="image/*"
+            onChange={e => setFile1(e.target.files?.[0] || null)}
             className="w-full p-2 rounded bg-gray-900 border border-gray-700 text-gray-300"
           />
           {preview1 && (
             <div className="mt-4 border border-gray-700 rounded p-2 flex justify-center items-center">
-              {file1.type.startsWith('image/') ? (
-                <img src={preview1} alt="preview 1" className="max-w-full rounded" />
-              ) : (
-                <p className="text-sm italic">{file1.name}</p>
-              )}
+              <img src={preview1} alt="preview 1" className="max-w-full rounded" />
             </div>
           )}
         </div>
 
-        {/* Conditionally render File input 2 only if encode is selected */}
-        {selectedOption === 'encode' && (
+        {(selectedOption === 'encode' || selectedOption === 'diffmap') && (
           <div>
             <label className="block mb-2 font-semibold text-neon">Upload File 2</label>
             <input
               type="file"
-              accept="image/*,video/*,text/*"
-              onChange={e => setFile2(e.target.files[0])}
+              accept="image/*"
+              onChange={e => setFile2(e.target.files?.[0] || null)}
               className="w-full p-2 rounded bg-gray-900 border border-gray-700 text-gray-300"
             />
             {preview2 && (
               <div className="mt-4 border border-gray-700 rounded p-2 flex justify-center items-center">
-                {file2.type.startsWith('image/') ? (
-                  <img src={preview2} alt="preview 2" className="max-w-full rounded" />
-                ) : (
-                  <p className="text-sm italic">{file2.name}</p>
-                )}
+                <img src={preview2} alt="preview 2" className="max-w-full rounded" />
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Center: dropdown + convert button */}
+      {/* Center controls */}
       <div className="flex flex-col justify-center items-center space-y-6">
         <select
           value={selectedOption}
@@ -104,7 +145,7 @@ export default function Steg() {
           className="w-48 p-3 rounded bg-gray-900 border border-gray-700 text-gray-300 font-semibold text-center text-lg cursor-pointer"
         >
           {options.map(opt => (
-            <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
+            <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
@@ -112,20 +153,32 @@ export default function Steg() {
 
         <button
           onClick={handleConvert}
-          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded text-white font-bold text-lg transition-shadow shadow-md shadow-blue-500"
+          disabled={busy}
+          className={`px-8 py-3 rounded text-white font-bold text-lg transition-shadow shadow-md ${
+            busy
+              ? 'bg-gray-700 cursor-wait'
+              : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500'
+          }`}
         >
-          Convert
+          {busy ? 'Processing…' : 'Convert'}
         </button>
+
+        {error && <div className="text-red-400 text-sm">{error}</div>}
       </div>
 
-      {/* Right: output preview + download */}
+      {/* Output + download */}
       <div className="flex flex-col space-y-6">
         <label className="font-semibold text-neon">Output Preview</label>
         <div
-          className="flex-1 bg-gray-900 rounded border border-gray-700 p-4 overflow-auto text-sm whitespace-pre-wrap"
-          style={{ minHeight: '300px' }}
+          className="bg-gray-900 rounded border border-gray-700 p-4 overflow-auto text-sm whitespace-pre-wrap inline-flex items-center justify-center"
         >
-          {output || 'Output will appear here after conversion.'}
+          {!output ? (
+            'Output will appear here after conversion.'
+          ) : output.kind === 'image' ? (
+            <img src={output.url} alt="output" className="max-w-full max-h-full rounded" />
+          ) : (
+            'Unsupported output'
+          )}
         </div>
 
         <button
