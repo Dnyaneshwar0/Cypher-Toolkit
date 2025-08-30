@@ -18,3 +18,16 @@ torch==2.1.0
 torchvision==0.16.1
 facenet-pytorch==2.8.2
 faiss-cpu==1.7.4
+
+# Audio processing
+librosa==0.10.1
+soundfile==0.12.1
+
+# NLP for transcript emotion analysis
+transformers==4.34.0
+sentencepiece==0.1.99
+torchtext==0.17.1
+
+# Facial emotion recognition
+deepface==0.0.92
+fer==23.0.0
