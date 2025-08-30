@@ -13,14 +13,16 @@ class SignatureClassifier:
         self.model.eval()
         self.class_mapping = {0: "StyleGAN2", 1: "FaceSwap", 2: "DeepFaceLab"}
 
-    def predict(self, frame_features: torch.Tensor) -> Dict[str, float]:
+    def predict(self, frames_tensor: torch.Tensor) -> Dict[str, float]:
         """
-        Expects frame_features: Tensor of shape [1, 3, H, W] normalized
+        Expects frames_tensor: Tensor of shape [B, 3, 224, 224], normalized
+        Returns averaged prediction across batch
         """
-        frame_features = frame_features.to(self.device)
+        frames_tensor = frames_tensor.to(self.device)
         with torch.no_grad():
-            logits = self.model(frame_features)
+            logits = self.model(frames_tensor)
             probs = F.softmax(logits, dim=1)
-            conf, pred_idx = torch.max(probs, dim=1)
+            avg_probs = probs.mean(dim=0)
+            conf, pred_idx = torch.max(avg_probs, dim=0)
             model_name = self.class_mapping[int(pred_idx)]
         return {"model_likely": model_name, "confidence": float(conf), "method": "full-synthesis"}
