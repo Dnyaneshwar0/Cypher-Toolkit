@@ -13,10 +13,13 @@ class DatasetTracer:
 
         self.dataset_names = []
         self.embeddings = []
-        for file in os.listdir(dataset_embeddings_dir):
-            if file.endswith(".npy"):
-                self.dataset_names.append(file.replace(".npy",""))
-                self.embeddings.append(np.load(os.path.join(dataset_embeddings_dir, file)))
+
+        if os.path.exists(dataset_embeddings_dir):
+            for file in os.listdir(dataset_embeddings_dir):
+                if file.endswith(".npy"):
+                    self.dataset_names.append(file.replace(".npy", ""))
+                    self.embeddings.append(np.load(os.path.join(dataset_embeddings_dir, file)))
+
         if self.embeddings:
             self.embeddings = np.vstack(self.embeddings).astype('float32')
             self.index = faiss.IndexFlatL2(self.embeddings.shape[1])
