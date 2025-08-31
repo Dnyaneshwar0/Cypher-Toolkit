@@ -1,146 +1,135 @@
 .
 ├── backend
-│   ├── app
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── schemas.py
-│   │   ├── routes
-│   │   │   ├── captcha_routes.py
-│   │   │   ├── decode_routes.py
-│   │   │   ├── encode_routes.py
-│   │   │   ├── encrypt_routes.py
-│   │   │   ├── __init__.py
-│   │   │   └── steg_routes.py
-│   │   ├── services
-│   │   │   ├── captcha_gen.py
-│   │   │   ├── captcha_solver.py
-│   │   │   ├── cracker.py
-│   │   │   ├── crypto_utils
-│   │   │   │   ├── encoder.py
-│   │   │   │   ├── encrypter.py
-│   │   │   │   └── __init__.py
-│   │   │   ├── deepfake_forensics
-│   │   │   │   ├── extractors
-│   │   │   │   │   ├── artifact.py
-│   │   │   │   │   ├── frequency.py
-│   │   │   │   │   ├── __init__.py
-│   │   │   │   │   ├── __pycache__
-│   │   │   │   │   │   ├── artifact.cpython-312.pyc
-│   │   │   │   │   │   ├── frequency.cpython-312.pyc
-│   │   │   │   │   │   ├── __init__.cpython-312.pyc
-│   │   │   │   │   │   └── temporal.cpython-312.pyc
-│   │   │   │   │   └── temporal.py
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── models
-│   │   │   │   │   ├── dataset_tracer.py
-│   │   │   │   │   ├── __init__.py
-│   │   │   │   │   ├── __pycache__
-│   │   │   │   │   │   ├── dataset_tracer.cpython-312.pyc
-│   │   │   │   │   │   ├── __init__.cpython-312.pyc
-│   │   │   │   │   │   └── signature_classifier.cpython-312.pyc
-│   │   │   │   │   └── signature_classifier.py
-│   │   │   │   ├── pipeline.py
-│   │   │   │   ├── __pycache__
-│   │   │   │   │   ├── __init__.cpython-312.pyc
-│   │   │   │   │   └── pipeline.cpython-312.pyc
-│   │   │   │   └── schemas.py
-│   │   │   ├── emotion_detection
-│   │   │   │   ├── fusion.py
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── modules
-│   │   │   │   │   ├── audio_emotion.py
-│   │   │   │   │   ├── facial_emotion.py
-│   │   │   │   │   ├── __init__.py
-│   │   │   │   │   └── transcript_emotion.py
-│   │   │   │   ├── pipeline.py
-│   │   │   │   └── preprocess
-│   │   │   │       ├── audio.py
-│   │   │   │       ├── __init__.py
-│   │   │   │       └── video.py
-│   │   │   ├── __init__.py
-│   │   │   ├── __pycache__
-│   │   │   │   └── __init__.cpython-312.pyc
-│   │   │   └── steganography.py
-│   │   └── utils
-│   │       ├── file_utils.py
-│   │       ├── format_detector.py
-│   │       ├── hash_utils.py
-│   │       └── __init__.py
-│   ├── main.py
-│   ├── README.md
-│   ├── requirements.txt
-│   └── tests
-│       ├── captcha
-│       │   └── test_captcha.py
-│       ├── crypto_utils
-│       │   ├── test_encoder_cli.py
-│       │   └── test_encrypter_cli.py
-│       ├── emotion_detection
-│       │   └── __init__.py
-│       ├── forensics
-│       │   ├── __init__.py
-│       │   ├── __pycache__
-│       │   │   ├── __init__.cpython-312.pyc
-│       │   │   └── test_forensics_cli.cpython-312.pyc
-│       │   └── test_forensics_cli.py
-│       └── steg
-│           └── test_steg_cli.py
+│   ├── app
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── schemas.py
+│   │   ├── routes
+│   │   │   ├── captcha_routes.py
+│   │   │   ├── emotion_routes.py
+│   │   │   ├── encode_routes.py
+│   │   │   ├── encrypt_routes.py
+│   │   │   ├── __init__.py
+│   │   │   └── steg_routes.py
+│   │   ├── services
+│   │   │   ├── captcha
+│   │   │   │   ├── captcha_gen.py
+│   │   │   │   ├── captcha_solver.py
+│   │   │   │   └── __init__.py
+│   │   │   ├── crypto_utils
+│   │   │   │   ├── encoder.py
+│   │   │   │   ├── encrypter.py
+│   │   │   │   └── __init__.py
+│   │   │   ├── deepfake_forensics
+│   │   │   │   ├── extractors
+│   │   │   │   │   ├── artifact.py
+│   │   │   │   │   ├── frequency.py
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   └── temporal.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── models
+│   │   │   │   │   ├── dataset_tracer.py
+│   │   │   │   │   ├── feature_scaler.py
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   └── signature_classifier.py
+│   │   │   │   ├── pipeline.py
+│   │   │   │   └── schemas.py
+│   │   │   ├── emotion_detection
+│   │   │   │   ├── fusion.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── modules
+│   │   │   │   │   ├── audio_emotion.py
+│   │   │   │   │   ├── deepfake_detector.py
+│   │   │   │   │   ├── facial_emotion.py
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   └── transcript_emotion.py
+│   │   │   │   ├── pipeline.py
+│   │   │   │   └── preprocess
+│   │   │   │       ├── audio.py
+│   │   │   │       ├── __init__.py
+│   │   │   │       ├── transcript.py
+│   │   │   │       └── video.py
+│   │   │   ├── __init__.py
+│   │   │   └── steg
+│   │   │       └── steganography.py
+│   │   └── utils
+│   │       ├── file_utils.py
+│   │       ├── format_detector.py
+│   │       ├── hash_utils.py
+│   │       └── __init__.py
+│   ├── main.py
+│   ├── README.md
+│   └── tests
+│       ├── captcha
+│       │   └── test_captcha.py
+│       ├── crypto_utils
+│       │   ├── test_encoder_cli.py
+│       │   └── test_encrypter_cli.py
+│       ├── emotion_detection
+│       │   ├── cli.py
+│       │   └── __init__.py
+│       ├── forensics
+│       │   ├── cli.py
+│       │   ├── __init__.py
+│       │   └── test_forensics_cli.py
+│       └── steg
+│           └── test_steg_cli.py
 ├── data
-│   ├── forensics_samples
-│   │   └── videos
-│   │       └── sample.mp4
-│   ├── images
-│   │   ├── captcha
-│   │   │   └── captcha_test.png
-│   │   ├── encrypt
-│   │   │   ├── img1_dec.png
-│   │   │   └── img1.png
-│   │   └── steg
-│   │       ├── sample_orig.png
-│   │       ├── sample.png
-│   │       ├── secret_orig.png
-│   │       └── secret.png
-│   ├── qrcode
-│   │   └── encrypt
-│   │       └── fingerprint_qr.png
-│   ├── texts
-│   │   ├── captcha
-│   │   │   ├── captcha_answer.txt
-│   │   │   └── captcha_signature.txt
-│   │   ├── encrypt
-│   │   │   └── sample_prime.txt
-│   │   └── steg
-│   │       └── long_message.txt
-│   └── zip
-│       └── decrypt
-│           ├── img1.png
-│           └── sample_prime.txt
+│   ├── forensics_samples
+│   │   └── videos
+│   │       └── sample.mp4
+│   ├── images
+│   │   ├── captcha
+│   │   │   └── captcha_test.png
+│   │   ├── encrypt
+│   │   │   ├── img1_dec.png
+│   │   │   └── img1.png
+│   │   └── steg
+│   │       ├── sample_orig.png
+│   │       ├── sample.png
+│   │       ├── secret_orig.png
+│   │       └── secret.png
+│   ├── qrcode
+│   │   └── encrypt
+│   │       └── fingerprint_qr.png
+│   ├── texts
+│   │   ├── captcha
+│   │   │   ├── captcha_answer.txt
+│   │   │   └── captcha_signature.txt
+│   │   ├── encrypt
+│   │   │   └── sample_prime.txt
+│   │   └── steg
+│   │       └── long_message.txt
+│   ├── videos
+│   └── zip
+│       └── decrypt
+│           ├── img1.png
+│           └── sample_prime.txt
 ├── frontend
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── postcss.config.js
-│   ├── public
-│   │   └── index.html
-│   ├── src
-│   │   ├── App.js
-│   │   ├── assets
-│   │   │   └── background.jpg
-│   │   ├── components
-│   │   │   ├── FeatureCard.js
-│   │   │   └── Footer.js
-│   │   ├── index.js
-│   │   ├── pages
-│   │   │   ├── Dummy.js
-│   │   │   ├── Encrypt.js
-│   │   │   ├── forensics
-│   │   │   ├── Home.js
-│   │   │   └── Steg.js
-│   │   └── styles
-│   │       └── index.css
-│   └── tailwind.config.js
-├── project_structure.txt
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── postcss.config.js
+│   ├── public
+│   │   └── index.html
+│   ├── src
+│   │   ├── App.js
+│   │   ├── assets
+│   │   │   └── background.jpg
+│   │   ├── components
+│   │   │   ├── FeatureCard.js
+│   │   │   └── Footer.js
+│   │   ├── index.js
+│   │   ├── pages
+│   │   │   ├── Dummy.js
+│   │   │   ├── Emotion.js
+│   │   │   ├── Encrypt.js
+│   │   │   ├── Home.js
+│   │   │   └── Steg.js
+│   │   └── styles
+│   │       └── index.css
+│   └── tailwind.config.js
 ├── project_tree.txt
 ├── README.md
 └── requirement.txt
 
-48 directories, 96 files
+45 directories, 88 files

@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 import os
 import tempfile
 import uuid
-from ..services import steganography
+from ..services.steg import steganography
 
 steg_bp = Blueprint('steg_bp', __name__)
 UPLOAD_FOLDER = tempfile.gettempdir()

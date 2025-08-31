@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Response
-from app.services.captcha_gen import create_captcha
+from backend.app.services.captcha.captcha_gen import create_captcha
 
 router = APIRouter()
 
