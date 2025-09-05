@@ -231,6 +231,21 @@ export default function Home() {
                 />
               </Link>
             </div>
+            <Link to="/dummy" className='block'>
+              <FeatureCard
+                title="Base64 Encoding"
+                description="Encode or decode messages using Base64 — perfect for web devs and tinkerers."
+                gif={backgroundImage}
+              />
+            </Link>
+            <Link to="/captcha" className='block'>
+              <FeatureCard
+                title="CAPTCHA Generator"
+                description="Generate custom CAPTCHAs and test human vs bot recognition."
+                gif={backgroundImage}
+              />
+            </Link>
+
           </div>
         </div>
       </section>

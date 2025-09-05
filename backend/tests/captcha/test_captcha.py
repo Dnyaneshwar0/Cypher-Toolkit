@@ -5,9 +5,9 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../app/services')))
 
 from captcha_gen import create_captcha  # From captcha_gen.py
-from captcha_solver import verify_captcha  # From captcha_solver.py
+from captcha_gen import verify_captcha  # From captcha_solver.py
 
-
+from captcha_solver import solve_captcha
 def generate_captcha_flow():
     captcha_result = create_captcha()
 
@@ -68,8 +68,9 @@ def menu():
 
         if choice == "1":
             generate_captcha_flow()
-        elif choice == "2":
             solve_captcha_flow()
+        elif choice == "2":
+            solve_captcha()
         elif choice == "3":
             print("👋 Exiting.")
             break
