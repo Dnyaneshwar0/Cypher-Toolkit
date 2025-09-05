@@ -117,17 +117,16 @@ export default function Home() {
           <h1
             className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-blue-400 drop-shadow-lg font-orbitron tracking-wider relative"
             style={{
-              textShadow: `0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.5)`,
-              filter: `brightness(${1.2 + Math.sin(mousePosition.x / 100) * 0.3})`,
+              textShadow: `0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.5)`
             }}
           >
             Cypher Toolkit
-            <span
+            {/* <span
               className="absolute inset-0 text-cyan-300 opacity-40 animate-ping"
               style={{ animationDuration: "3s" }}
             >
               Cypher Toolkit
-            </span>
+            </span> */}
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-300 max-w-xl leading-relaxed">
             A futuristic toolkit for learning and experimenting with encryption, encoding, steganography, and more.
