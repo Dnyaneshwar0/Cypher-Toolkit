@@ -36,12 +36,6 @@ export default function Steg() {
 
     if ((selectedOption === 'encode' || selectedOption === 'diffmap') && (!file1 || !file2)) {
       setError('Please upload two files.');
-  const handleConvert = async () => {
-    setError('');
-    setOutput(null);
-
-    if ((selectedOption === 'encode' || selectedOption === 'diffmap') && (!file1 || !file2)) {
-      setError('Please upload two files.');
       return;
     }
     if (selectedOption === 'decode' && !file1) {
