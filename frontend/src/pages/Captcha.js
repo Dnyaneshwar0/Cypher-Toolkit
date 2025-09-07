@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+const API_BASE_URL = "http://localhost:5000";
 export default function Captcha() {
   const [mode, setMode] = useState("generate"); // generate | solve
   const [capId, setCapId] = useState("");
@@ -18,12 +18,12 @@ export default function Captcha() {
       setOcrResult("");
       setInput("");
 
-      const res = await fetch("/captcha/generate?len=6");
+      const res = await fetch("/captcha/generate?len=15");
       if (!res.ok) throw new Error(`Generate failed: ${res.status}`);
       const data = await res.json();
 
       setCapId(data.id);
-      setImageUrl(data.image_url); // e.g. /captcha/image/<id>
+      setImageUrl(data.image_url);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -69,86 +69,117 @@ export default function Captcha() {
     }
   }
 
-  // auto-generate one when page opens
+  // Auto-generate captcha when component mounts
   useEffect(() => {
     createCaptcha();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-gray-300 px-6 py-12 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 font-orbitron">
+    <div className="min-h-screen bg-black text-gray-300 px-6 py-12 max-w-7xl mx-auto font-orbitron">
+      {/* Symbolic Header */}
+      <div className="relative mb-12">
+        <div className="absolute top-0 left-0 w-full h-16 overflow-hidden pointer-events-none">
+          <div className="flex space-x-8 text-cyan-400 opacity-30 text-sm animate-pulse">
+            {Array.from({ length: 50 }, (_, i) => (
+              <span key={i} className="whitespace-nowrap mt-12">
+                {"∑∆Ωαβγδεζηθλμπρστω∞≡⊕⊗∧∨¬→↔".charAt(Math.floor(Math.random() * 20))}
+              </span>
+            ))}
+          </div>
+        </div>
+        <h1 className="text-4xl font-bold text-center text-cyan-400 mt-0 mb-12">
+          Captcha Tools
+        </h1>
+        <p className="text-center text-gray-400">
+          Generate, verify, and solve captchas automatically
+        </p>
+      </div>
 
-      {/* Left: Captcha display */}
-      <div className="flex flex-col items-center justify-center space-y-6">
-        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 flex items-center justify-center min-h-[120px] min-w-[320px]">
-          {imageUrl ? (
-            <img
-              src={imageUrl + `?t=${capId}`} // bust cache
-              alt="captcha"
-              className="rounded max-h-[140px]"
-            />
-          ) : (
-            <div className="text-gray-500">No Captcha</div>
-          )}
+      {/* Main Captcha content */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        {/* Left: Captcha display */}
+        <div className="flex flex-col items-center justify-center space-y-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 flex items-center justify-center min-h-[120px] min-w-[600px]">
+            {imageUrl ? (
+              <img
+                src={imageUrl + `?t=${capId}`} // bust cache
+                alt="captcha"
+                className="rounded max-h-[140px]"
+              />
+            ) : (
+              <div className="text-gray-500">No Captcha</div>
+            )}
+          </div>
+
+          <button
+            onClick={createCaptcha}
+            disabled={busy}
+            className={`px-6 py-2 rounded text-white font-semibold ${
+              busy ? "bg-gray-700 cursor-wait" : "bg-blue-600 hover:bg-blue-700"
+            }`}
+          >
+            Generate Captcha
+          </button>
         </div>
 
-        <button
-          onClick={createCaptcha}
-          disabled={busy}
-          className={`px-6 py-2 rounded text-white font-semibold ${busy ? "bg-gray-700 cursor-wait" : "bg-blue-600 hover:bg-blue-700"}`}
-        >
-          Generate Captcha
-        </button>
-      </div>
+        {/* Middle: Mode selector and error */}
+        <div className="flex flex-col justify-center items-center space-y-6">
+          <select
+            value={mode}
+            onChange={(e) => {
+              setMode(e.target.value);
+              setResult("");
+              setOcrResult("");
+            }}
+            className="w-56 p-3 rounded bg-gray-900 border border-gray-700 text-gray-300 font-semibold text-center text-lg cursor-pointer"
+          >
+            <option value="generate">Captcha Generation</option>
+            <option value="solve">Captcha Solver</option>
+          </select>
+          {error && <div className="text-red-400 text-sm">{error}</div>}
+        </div>
 
-      {/* Middle: Dropdown */}
-      <div className="flex flex-col justify-center items-center space-y-6">
-        <select
-          value={mode}
-          onChange={(e) => { setMode(e.target.value); setResult(""); setOcrResult(""); }}
-          className="w-56 p-3 rounded bg-gray-900 border border-gray-700 text-gray-300 font-semibold text-center text-lg cursor-pointer"
-        >
-          <option value="generate">Captcha Generation</option>
-          <option value="solve">Captcha Solver</option>
-        </select>
-        {error && <div className="text-red-400 text-sm">{error}</div>}
-      </div>
-
-      {/* Right: Guess/Solve */}
-      <div className="flex flex-col justify-center items-center space-y-6">
-        {mode === "generate" ? (
-          <>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="w-56 p-2 rounded bg-gray-900 border border-gray-700 text-gray-200 text-center"
-              placeholder="Enter captcha"
-              disabled={!capId || busy}
-            />
-            <button
-              onClick={verifyCaptcha}
-              disabled={!capId || busy}
-              className={`px-6 py-2 rounded text-white font-semibold ${busy ? "bg-gray-700 cursor-wait" : "bg-green-600 hover:bg-green-700"}`}
-            >
-              Submit
-            </button>
-            {result && <div className="text-lg font-bold">{result}</div>}
-          </>
-        ) : (
-          <>
-            <button
-              onClick={solveWithOCR}
-              disabled={!capId || busy}
-              className={`px-6 py-2 rounded text-white font-semibold ${busy ? "bg-gray-700 cursor-wait" : "bg-purple-600 hover:bg-purple-700"}`}
-            >
-              Solve with OCR
-            </button>
-            {ocrResult && (
-              <div className="text-2xl font-bold text-yellow-400">{ocrResult}</div>
-            )}
-          </>
-        )}
+        {/* Right: Input and actions */}
+        <div className="flex flex-col justify-center items-center space-y-6">
+          {mode === "generate" ? (
+            <>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="w-56 p-2 rounded bg-gray-900 border border-gray-700 text-gray-200 text-center"
+                placeholder="Enter captcha"
+                disabled={!capId || busy}
+              />
+              <button
+                onClick={verifyCaptcha}
+                disabled={!capId || busy}
+                className={`px-6 py-2 rounded text-white font-semibold ${
+                  busy ? "bg-gray-700 cursor-wait" : "bg-green-600 hover:bg-green-700"
+                }`}
+              >
+                Submit
+              </button>
+              {result && <div className="text-lg font-bold">{result}</div>}
+            </>
+          ) : (
+            <>
+              <button
+                onClick={solveWithOCR}
+                disabled={!capId || busy}
+                className={`px-6 py-2 rounded text-white font-semibold ${
+                  busy ? "bg-gray-700 cursor-wait" : "bg-purple-600 hover:bg-purple-700"
+                }`}
+              >
+                Solve with OCR
+              </button>
+              {ocrResult && (
+                <div className="text-2xl font-bold text-yellow-400">{ocrResult}</div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

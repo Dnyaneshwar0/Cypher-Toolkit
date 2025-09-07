@@ -125,17 +125,24 @@ import string
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 # ---- Paths ----
-BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-DATA_DIR = os.path.join(BACKEND_DIR, "data")
+# Current file is assumed inside backend/app/services/captcha or similar
+CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Go up three levels from current file to project root, assuming backend is one folder inside root
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", "..",".."))
+
+# Then point DATA_DIR outside backend, directly under project root
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+
 IMG_DIR = os.path.join(DATA_DIR, "images", "captcha")
-os.makedirs(IMG_DIR, exist_ok=True)
+os.makedirs(IMG_DIR, exist_ok=True) 
 
 # In-memory store: {captcha_id: correct_text}
 CAPTCHA_STORE = {}
 
 CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789"  # no easily confused chars
 
-def _random_text(length: int = 6) -> str:
+def _random_text(length: int = 15) -> str:
     return "".join(random.choice(CHARS) for _ in range(length))
 
 def _noise(draw: ImageDraw.Draw, w: int, h: int):
@@ -144,18 +151,18 @@ def _noise(draw: ImageDraw.Draw, w: int, h: int):
         x, y = random.randint(0, w-1), random.randint(0, h-1)
         draw.point((x, y), fill=(random.randint(0,255), random.randint(0,255), random.randint(0,255)))
     # lines
-    for _ in range(6):
+    for _ in range(15):
         x1, y1 = random.randint(0,w-1), random.randint(0,h-1)
         x2, y2 = random.randint(0,w-1), random.randint(0,h-1)
         draw.line((x1,y1,x2,y2), fill=(random.randint(80,200), 0, random.randint(80,200)), width=random.randint(1,3))
 
-def generate_captcha(length: int = 6):
+def generate_captcha(length: int = 15):
     """
     Creates a noisy CAPTCHA image, saves it under /backend/data/images/captcha/<id>.png,
     stores the answer in-memory, and returns (id, text, abs_path).
     """
     text = _random_text(length)
-    w, h = 320, 100
+    w, h = 610, 100
 
     img = Image.new("RGB", (w, h), "white")
     draw = ImageDraw.Draw(img)

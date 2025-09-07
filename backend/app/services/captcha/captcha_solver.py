@@ -1,34 +1,3 @@
-
-# # captcha_solver.py
-# import cv2
-# import numpy as np
-# import pytesseract
-# # from paddleocr import PaddleOCR
-# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
-# # captcha_solver.py
-
-# import easyocr
-
-# def solve_captcha(image_path):
-#     # Initialize EasyOCR reader (English only for speed)
-#     reader = easyocr.Reader(['en'], gpu=False)
-
-#     # Run OCR on the image
-#     results = reader.readtext(image_path, detail=0)
-
-#     # Join detected text parts into one string
-#     captcha_text = "".join(results).replace(" ", "").strip()
-
-#     return captcha_text
-
-
-# if __name__ == "__main__":
-#     # 👇 Set your captcha image path here
-#     image_path = r"C:\Projects\Cypher-Toolkit\data\images\captcha\captcha_test.png"
-
-#     result = solve_captcha(image_path)
-#     print(f"Captcha Text: {result}")
 import os
 import cv2
 import numpy as np

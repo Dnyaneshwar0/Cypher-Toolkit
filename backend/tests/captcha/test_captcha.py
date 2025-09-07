@@ -2,7 +2,7 @@ import sys
 import os
 
 # Add the services folder to Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../app/services')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../app/services/captcha')))
 
 from captcha_gen import create_captcha  # From captcha_gen.py
 from captcha_gen import verify_captcha  # From captcha_solver.py

@@ -223,28 +223,13 @@ export default function Home() {
             <div
               className={`transition-all duration-700 delay-500 ${visibleCards.includes(3) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
             >
-              <Link to="/dummy" className="block">
+              <Link to="/captcha" className="block">
                 <FeatureCard
                   title="CAPTCHA Generator"
                   description="Generate custom CAPTCHAs and test human vs bot recognition."
                 />
               </Link>
             </div>
-            <Link to="/dummy" className='block'>
-              <FeatureCard
-                title="Base64 Encoding"
-                description="Encode or decode messages using Base64 — perfect for web devs and tinkerers."
-                gif={backgroundImage}
-              />
-            </Link>
-            <Link to="/captcha" className='block'>
-              <FeatureCard
-                title="CAPTCHA Generator"
-                description="Generate custom CAPTCHAs and test human vs bot recognition."
-                gif={backgroundImage}
-              />
-            </Link>
-
           </div>
         </div>
       </section>

@@ -24,7 +24,7 @@
 # backend/app/routes/captcha_routes.py
 import os
 from flask import Blueprint, jsonify, request, send_file
-from ..services import captcha_gen, captcha_solver
+from ..services.captcha import captcha_gen, captcha_solver
 
 captcha_bp = Blueprint("captcha", __name__, url_prefix="/captcha")
 
@@ -35,9 +35,9 @@ def health():
 @captcha_bp.route("/generate", methods=["GET"])
 def generate():
     try:
-        length = int(request.args.get("len", 6))
+        length = int(request.args.get("len", 15))
     except Exception:
-        length = 6
+        length = 15
 
     cap_id, text, abs_path = captcha_gen.generate_captcha(length=length)
 
